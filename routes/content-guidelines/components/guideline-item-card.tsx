@@ -18,12 +18,14 @@ interface GuidelineItemCardProps {
 	icon: JSX.Element;
 	title: string;
 	description: string;
+	onClick: () => void;
 }
 
 function GuidelineItemCard( {
 	icon,
 	title,
 	description,
+	onClick,
 }: GuidelineItemCardProps ) {
 	const baseId = useInstanceId(
 		GuidelineItemCard,
@@ -38,7 +40,7 @@ function GuidelineItemCard( {
 			className="content-guidelines__card"
 			aria-labelledby={ titleId }
 			aria-describedby={ descriptionId }
-			// TODO: Add navigation/onClick when sub-pages are implemented
+			onClick={ onClick }
 		>
 			<HStack justify="flex-start" alignment="start" spacing={ 3 }>
 				<span
