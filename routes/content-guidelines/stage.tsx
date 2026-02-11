@@ -64,16 +64,26 @@ function ContentGuidelinesPage() {
 			) }
 		>
 			<div className="content-guidelines__content">
-				<div className="content-guidelines__list">
+				{ /*
+				 * Disable reason: The `list` ARIA role is redundant but
+				 * Safari+VoiceOver won't announce the list otherwise.
+				 */
+				/* eslint-disable jsx-a11y/no-redundant-roles */ }
+				<ul role="list" className="content-guidelines__list">
 					{ GUIDELINE_ITEMS.map( ( item ) => (
-						<GuidelineItemCard
+						<li
 							key={ item.title }
-							icon={ item.icon }
-							title={ item.title }
-							description={ item.description }
-						/>
+							className="content-guidelines__list-item"
+						>
+							<GuidelineItemCard
+								icon={ item.icon }
+								title={ item.title }
+								description={ item.description }
+							/>
+						</li>
 					) ) }
-				</div>
+				</ul>
+				{ /* eslint-enable jsx-a11y/no-redundant-roles */ }
 			</div>
 		</Page>
 	);
