@@ -3,14 +3,15 @@
  */
 import {
 	Button,
+	Navigator,
 	TextareaControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
-import { chevronLeft } from '@wordpress/icons';
 import { useInstanceId } from '@wordpress/compose';
+import { chevronLeft } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -54,8 +55,7 @@ export default function GuidelineItemEdit( {
 			>
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 1 } alignment="left">
-						<Button
-							type="button"
+						<Navigator.BackButton
 							onClick={ onBack }
 							icon={ chevronLeft }
 							aria-label={ __(

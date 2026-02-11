@@ -3,7 +3,7 @@
  */
 import { Page } from '@wordpress/admin-ui';
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { Navigator, useNavigator } from '@wordpress/components';
 import {
 	image,
 	layout,
@@ -65,15 +65,41 @@ const GUIDELINE_ITEMS = [
 	},
 ];
 
-function ContentGuidelinesPage() {
-	const [ selectedGuideline, setSelectedGuideline ] = useState<
-		string | null
-	>( null );
+function GuidelineListScreen() {
+	const navigator = useNavigator();
 
-	const handleSelectGuideline = ( guideline: string ) => {
-		setSelectedGuideline( guideline );
+	const handleSelectGuideline = ( slug: string ) => {
+		navigator.goTo( `/guideline/${ slug }` );
 	};
 
+	return (
+		<div className="content-guidelines__content">
+			{ /*
+			 * Disable reason: The `list` ARIA role is redundant but
+			 * Safari+VoiceOver won't announce the list otherwise.
+			 */
+			/* eslint-disable jsx-a11y/no-redundant-roles */ }
+			<ul role="list" className="content-guidelines__list">
+				{ GUIDELINE_ITEMS.map( ( item ) => (
+					<li
+						key={ item.slug }
+						className="content-guidelines__list-item"
+					>
+						<GuidelineItemCard
+							icon={ item.icon }
+							title={ item.title }
+							description={ item.description }
+							onClick={ () => handleSelectGuideline( item.slug ) }
+						/>
+					</li>
+				) ) }
+			</ul>
+			{ /* eslint-enable jsx-a11y/no-redundant-roles */ }
+		</div>
+	);
+}
+
+function ContentGuidelinesPage() {
 	return (
 		<Page
 			title={ __( 'Content guidelines' ) }
@@ -81,47 +107,23 @@ function ContentGuidelinesPage() {
 				"Set content standards that guide your team, inform plugins, and help AI tools generate content that matches your site's voice and requirements."
 			) }
 		>
-			{ selectedGuideline ? (
-				<GuidelineItemEdit
-					title={
-						GUIDELINE_ITEMS.find(
-							( item ) => item.slug === selectedGuideline
-						)?.title || ''
-					}
-					description={
-						GUIDELINE_ITEMS.find(
-							( item ) => item.slug === selectedGuideline
-						)?.descriptionLong || ''
-					}
-					onBack={ () => setSelectedGuideline( null ) }
-				/>
-			) : (
-				<div className="content-guidelines__content">
-					{ /*
-					 * Disable reason: The `list` ARIA role is redundant but
-					 * Safari+VoiceOver won't announce the list otherwise.
-					 */
-					/* eslint-disable jsx-a11y/no-redundant-roles */ }
-					<ul role="list" className="content-guidelines__list">
-						{ GUIDELINE_ITEMS.map( ( item ) => (
-							<li
-								key={ item.slug }
-								className="content-guidelines__list-item"
-							>
-								<GuidelineItemCard
-									icon={ item.icon }
-									title={ item.title }
-									description={ item.description }
-									onClick={ () =>
-										handleSelectGuideline( item.slug )
-									}
-								/>
-							</li>
-						) ) }
-					</ul>
-					{ /* eslint-enable jsx-a11y/no-redundant-roles */ }
-				</div>
-			) }
+			<Navigator initialPath="/">
+				<Navigator.Screen path="/">
+					<GuidelineListScreen />
+				</Navigator.Screen>
+
+				{ GUIDELINE_ITEMS.map( ( item ) => (
+					<Navigator.Screen
+						key={ item.slug }
+						path={ `/guideline/${ item.slug }` }
+					>
+						<GuidelineItemEdit
+							title={ item.title }
+							description={ item.descriptionLong }
+						/>
+					</Navigator.Screen>
+				) ) }
+			</Navigator>
 		</Page>
 	);
 }
