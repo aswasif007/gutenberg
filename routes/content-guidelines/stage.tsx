@@ -9,14 +9,18 @@ import {
 	layout,
 	formatListBullets,
 	termDescription,
+	blockDefault,
 } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
+import './store';
 import GuidelineItemCard from './components/guideline-item-card';
 import './style.scss';
 import GuidelineItemEdit from './components/guideline-item-edit';
+import BlockGuidelinesList from './components/block-guidelines-list';
+import BlockGuidelinesEdit from './components/block-guidelines-edit';
 
 const GUIDELINE_ITEMS = [
 	{
@@ -51,6 +55,17 @@ const GUIDELINE_ITEMS = [
 			'Outline your style, subject matter, technical requirements (dimensions, formats), mood and aesthetic preferences, and images to avoid. This ensures consistent, accessible imagery.'
 		),
 		slug: 'images',
+	},
+	{
+		icon: blockDefault,
+		title: __( 'Blocks' ),
+		description: __(
+			'Create tailored guidelines for specific block types.'
+		),
+		descriptionLong: __(
+			'Create tailored guidelines for specific block types (headings, images, quotes, etc.). This allows you to set unique standards for how different blocks are treated.'
+		),
+		slug: 'blocks',
 	},
 	{
 		icon: formatListBullets,
@@ -117,12 +132,25 @@ function ContentGuidelinesPage() {
 						key={ item.slug }
 						path={ `/guideline/${ item.slug }` }
 					>
-						<GuidelineItemEdit
-							title={ item.title }
-							description={ item.descriptionLong }
-						/>
+						{ item.slug === 'blocks' ? (
+							<BlockGuidelinesList
+								title={ item.title }
+								description={ item.descriptionLong }
+							/>
+						) : (
+							<GuidelineItemEdit
+								title={ item.title }
+								description={ item.descriptionLong }
+							/>
+						) }
 					</Navigator.Screen>
 				) ) }
+				<Navigator.Screen path="/guideline/blocks/edit/new">
+					<BlockGuidelinesEdit />
+				</Navigator.Screen>
+				<Navigator.Screen path="/guideline/blocks/edit/:block">
+					<BlockGuidelinesEdit />
+				</Navigator.Screen>
 			</Navigator>
 		</Page>
 	);

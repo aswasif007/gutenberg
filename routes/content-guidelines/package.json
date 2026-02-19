@@ -10,11 +10,13 @@
 	},
 	"dependencies": {
 		"@wordpress/admin-ui": "file:../../packages/admin-ui",
-		"@wordpress/base-styles": "file:../../packages/base-styles",
+		"@wordpress/api-fetch": "file:../../packages/api-fetch",
 		"@wordpress/components": "file:../../packages/components",
+		"@wordpress/compose": "file:../../packages/compose",
+		"@wordpress/data": "file:../../packages/data",
+		"@wordpress/dataviews": "file:../../packages/dataviews",
 		"@wordpress/element": "file:../../packages/element",
 		"@wordpress/i18n": "file:../../packages/i18n",
-		"@wordpress/icons": "file:../../packages/icons",
-		"@wordpress/compose": "file:../../packages/compose"
+		"@wordpress/icons": "file:../../packages/icons"
 	}
 }

@@ -7,6 +7,7 @@ import {
 	TextareaControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	useNavigator,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
@@ -21,14 +22,12 @@ import './guideline-item-edit.scss';
 interface GuidelineItemEditProps {
 	title: string;
 	description: string;
-	onBack: () => void;
 	onSave?: ( content: string ) => void;
 }
 
 export default function GuidelineItemEdit( {
 	title,
 	description,
-	onBack,
 	onSave,
 }: GuidelineItemEditProps ) {
 	const [ content, setContent ] = useState( '' );
@@ -39,6 +38,7 @@ export default function GuidelineItemEdit( {
 	const headingId = `${ baseId }-heading`;
 	const descriptionId = `${ baseId }-description`;
 	const formId = `${ baseId }-form`;
+	const navigator = useNavigator();
 
 	const handleSubmit = ( e: { preventDefault: () => void } ) => {
 		e.preventDefault();
@@ -56,7 +56,7 @@ export default function GuidelineItemEdit( {
 				<VStack spacing={ 4 }>
 					<HStack spacing={ 1 } alignment="left">
 						<Navigator.BackButton
-							onClick={ onBack }
+							onClick={ () => navigator.goBack() }
 							icon={ chevronLeft }
 							aria-label={ __(
 								'Go back to content guidelines list'
