@@ -16,7 +16,7 @@ const DEFAULT_STATE: ContentGuidelinesState = {
 	categories: {},
 };
 
-const CATEGORIES = [ 'site', 'copy', 'images', 'additional' ];
+export const CATEGORIES = [ 'site', 'copy', 'images', 'additional' ];
 
 const actions = {
 	setFromResponse( response: RestGuidelinesResponse ) {
