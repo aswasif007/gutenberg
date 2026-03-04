@@ -14,6 +14,7 @@ import './style.scss';
 import GuidelineAccordion from './components/guideline-accordion';
 import GuidelineAccordionForm from './components/guideline-accordion-form';
 import { fetchContentGuidelines } from './api';
+import ActionsSection from './components/actions-section';
 
 const GUIDELINE_ITEMS = [
 	{
@@ -131,6 +132,7 @@ function ContentGuidelinesPage() {
 							} ) }
 						</ul>
 						{ /* eslint-enable jsx-a11y/no-redundant-roles */ }
+						<ActionsSection />
 					</div>
 				)
 			) }
