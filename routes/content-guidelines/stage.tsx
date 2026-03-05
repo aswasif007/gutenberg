@@ -4,7 +4,7 @@
 import { Page } from '@wordpress/admin-ui';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from '@wordpress/element';
-import { Spinner } from '@wordpress/components';
+import { Spinner, Navigator } from '@wordpress/components';
 import { Notice } from '@wordpress/ui';
 
 /**
@@ -15,6 +15,8 @@ import GuidelineAccordion from './components/guideline-accordion';
 import GuidelineAccordionForm from './components/guideline-accordion-form';
 import { fetchContentGuidelines } from './api';
 import ActionsSection from './components/actions-section';
+import ManageAccess from './components/manage-access';
+import RevisionHistory from './components/revision-history';
 
 const GUIDELINE_ITEMS = [
 	{
@@ -92,48 +94,69 @@ function ContentGuidelinesPage() {
 				</div>
 			) : (
 				! error && (
-					<div className="content-guidelines__content">
-						{ /*
-						 * Disable reason: The `list` ARIA role is redundant but
-						 * Safari+VoiceOver won't announce the list otherwise.
-						 */
-						/* eslint-disable jsx-a11y/no-redundant-roles */ }
-						<ul role="list" className="content-guidelines__list">
-							{ GUIDELINE_ITEMS.map( ( item ) => {
-								const contentId = `content-guidelines-${ item.slug }`;
-								const headingId = `content-guidelines-${ item.slug }-heading`;
-								const descriptionId = `content-guidelines-${ item.slug }-description`;
+					<Navigator initialPath="/">
+						<Navigator.Screen path="/">
+							<div className="content-guidelines__content">
+								{ /*
+								 * Disable reason: The `list` ARIA role is redundant but
+								 * Safari+VoiceOver won't announce the list otherwise.
+								 */
+								/* eslint-disable jsx-a11y/no-redundant-roles */ }
+								<ul
+									role="list"
+									className="content-guidelines__list"
+								>
+									{ GUIDELINE_ITEMS.map( ( item ) => {
+										const contentId = `content-guidelines-${ item.slug }`;
+										const headingId = `content-guidelines-${ item.slug }-heading`;
+										const descriptionId = `content-guidelines-${ item.slug }-description`;
 
-								return (
-									<li
-										key={ item.slug }
-										className="content-guidelines__list-item"
-									>
-										<div className="content-guidelines__accordion-item">
-											<GuidelineAccordion
-												title={ item.title }
-												description={ item.description }
-												contentId={ contentId }
-												headingId={ headingId }
-												descriptionId={ descriptionId }
+										return (
+											<li
+												key={ item.slug }
+												className="content-guidelines__list-item"
 											>
-												<GuidelineAccordionForm
-													slug={ item.slug }
-													contentId={ contentId }
-													headingId={ headingId }
-													descriptionId={
-														descriptionId
-													}
-												/>
-											</GuidelineAccordion>
-										</div>
-									</li>
-								);
-							} ) }
-						</ul>
-						{ /* eslint-enable jsx-a11y/no-redundant-roles */ }
-						<ActionsSection />
-					</div>
+												<div className="content-guidelines__accordion-item">
+													<GuidelineAccordion
+														title={ item.title }
+														description={
+															item.description
+														}
+														contentId={ contentId }
+														headingId={ headingId }
+														descriptionId={
+															descriptionId
+														}
+													>
+														<GuidelineAccordionForm
+															slug={ item.slug }
+															contentId={
+																contentId
+															}
+															headingId={
+																headingId
+															}
+															descriptionId={
+																descriptionId
+															}
+														/>
+													</GuidelineAccordion>
+												</div>
+											</li>
+										);
+									} ) }
+								</ul>
+								{ /* eslint-enable jsx-a11y/no-redundant-roles */ }
+								<ActionsSection />
+							</div>
+						</Navigator.Screen>
+						<Navigator.Screen path="/manage-access">
+							<ManageAccess />
+						</Navigator.Screen>
+						<Navigator.Screen path="/revision-history">
+							<RevisionHistory />
+						</Navigator.Screen>
+					</Navigator>
 				)
 			) }
 		</Page>

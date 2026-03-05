@@ -10,7 +10,11 @@ import { store as noticesStore } from '@wordpress/notices';
  * Internal dependencies
  */
 import { STORE_NAME, CATEGORIES } from './store';
-import type { RestGuidelinesResponse, GuidelinesImportData } from './types';
+import type {
+	RestGuidelinesResponse,
+	GuidelinesImportData,
+	ContentGuidelinesRevision,
+} from './types';
 
 function getErrorMessage( error: unknown ): string {
 	return error instanceof Error ? error.message : __( 'Unknown error.' );
@@ -170,7 +174,7 @@ export function exportContentGuidelines(): void {
 		const url = URL.createObjectURL( blob );
 		const anchor = document.createElement( 'a' );
 		anchor.href = url;
-		anchor.download = 'content-guidelines.json';
+		anchor.download = 'guidelines.json';
 		document.body.appendChild( anchor );
 		anchor.click();
 		document.body.removeChild( anchor );
@@ -189,4 +193,51 @@ export function exportContentGuidelines(): void {
 			{ type: 'snackbar' }
 		);
 	}
+}
+
+export async function fetchContentGuidelinesRevisions( {
+	guidelinesId,
+	page = 1,
+	perPage = 10,
+	search,
+}: {
+	guidelinesId: number;
+	page?: number;
+	perPage?: number;
+	search?: string;
+} ): Promise< {
+	revisions: ContentGuidelinesRevision[];
+	total: number;
+	totalPages: number;
+} > {
+	const params = new URLSearchParams( {
+		page: String( page ),
+		per_page: String( perPage ),
+		_embed: 'author',
+		...( search ? { search } : {} ),
+	} );
+
+	const response = ( await apiFetch( {
+		path: `/wp/v2/content-guidelines/${ guidelinesId }/revisions?${ params }`,
+		parse: false,
+	} ) ) as Response;
+
+	const revisions = ( await response.json() ) as ContentGuidelinesRevision[];
+	const total = parseInt( response.headers.get( 'X-WP-Total' ) ?? '0', 10 );
+	const totalPages = parseInt(
+		response.headers.get( 'X-WP-TotalPages' ) ?? '0',
+		10
+	);
+
+	return { revisions, total, totalPages };
+}
+
+export async function restoreContentGuidelinesRevision(
+	guidelinesId: number,
+	revisionId: number
+): Promise< RestGuidelinesResponse > {
+	return ( await apiFetch( {
+		path: `/wp/v2/content-guidelines/${ guidelinesId }/revisions/${ revisionId }/restore`,
+		method: 'POST',
+	} ) ) as RestGuidelinesResponse;
 }
