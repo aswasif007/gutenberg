@@ -4,10 +4,32 @@
 
 import type { ReactNode } from 'react';
 
+export interface BlockOption {
+	value: string;
+	label: string;
+	description?: string;
+}
+
+export interface Categories {
+	site: string;
+	copy: string;
+	images: string;
+	additional: string;
+	blocks: Record< string, string >;
+}
+
 export interface ContentGuidelinesState {
 	id: number | null;
 	status: string | null;
-	categories: Record< string, string >;
+	categories: Categories;
+	blockTypes: BlockOption[];
+}
+
+export interface BlockTypeFromAPI {
+	name: string;
+	title: string;
+	parent?: string;
+	description: string;
 }
 
 export interface RestGuidelinesResponse {

@@ -10,7 +10,12 @@ import { store as noticesStore } from '@wordpress/notices';
  * Internal dependencies
  */
 import { STORE_NAME } from './store';
-import type { RestGuidelinesResponse } from './types';
+import type {
+	BlockOption,
+	BlockTypeFromAPI,
+	Categories,
+	RestGuidelinesResponse,
+} from './types';
 
 export async function fetchContentGuidelines(): Promise< RestGuidelinesResponse > {
 	const { setFromResponse } = dispatch( STORE_NAME ) as {
@@ -33,13 +38,15 @@ export async function saveContentGuidelines(): Promise< RestGuidelinesResponse >
 	const guidelinesStore = select( STORE_NAME ) as {
 		getId: () => number | null;
 		getStatus: () => string | null;
-		getAllGuidelines: () => Partial< Record< string, string > >;
+		getAllGuidelines: () => Categories;
+		getBlockGuidelines: () => Record< string, string >;
 		getGuideline: ( category: string ) => string;
 	};
 
 	const id = guidelinesStore.getId();
 	const status = guidelinesStore.getStatus() || 'draft';
 	const categories = guidelinesStore.getAllGuidelines();
+	const blockGuidelines = guidelinesStore.getBlockGuidelines();
 
 	const data = {
 		id,
@@ -57,6 +64,14 @@ export async function saveContentGuidelines(): Promise< RestGuidelinesResponse >
 			additional: {
 				guidelines: categories.additional,
 			},
+			blocks: Object.fromEntries(
+				Object.entries( blockGuidelines ).map(
+					( [ blockName, guidelines ] ) => [
+						blockName,
+						{ guidelines },
+					]
+				)
+			),
 		},
 	};
 
@@ -80,4 +95,30 @@ export async function saveContentGuidelines(): Promise< RestGuidelinesResponse >
 	} );
 
 	return response;
+}
+
+export async function fetchBlockTypes(): Promise< BlockOption[] > {
+	const { setBlockTypes } = dispatch( STORE_NAME ) as {
+		setBlockTypes: ( blockTypes: BlockOption[] ) => void;
+	};
+
+	const blockTypes = ( await apiFetch( {
+		path: '/wp/v2/block-types',
+	} ) ) as BlockTypeFromAPI[];
+
+	const coreBlockTypes = blockTypes
+		.filter(
+			( blockType ) =>
+				blockType.title && blockType.name && ! blockType.parent?.length
+		)
+		.sort( ( a, b ) => a.title.localeCompare( b.title ) )
+		.map( ( blockType ) => ( {
+			value: blockType.name,
+			label: blockType.title,
+			description: blockType.description,
+		} ) );
+
+	setBlockTypes( coreBlockTypes );
+
+	return coreBlockTypes;
 }

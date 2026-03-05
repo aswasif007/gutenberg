@@ -13,7 +13,8 @@ import { Notice } from '@wordpress/ui';
 import './style.scss';
 import GuidelineAccordion from './components/guideline-accordion';
 import GuidelineAccordionForm from './components/guideline-accordion-form';
-import { fetchContentGuidelines } from './api';
+import { fetchContentGuidelines, fetchBlockTypes } from './api';
+import BlockGuidelines from './components/block-guidelines';
 
 const GUIDELINE_ITEMS = [
 	{
@@ -41,6 +42,13 @@ const GUIDELINE_ITEMS = [
 		slug: 'images',
 	},
 	{
+		title: __( 'Blocks' ),
+		description: __(
+			'Create tailored guidelines for specific block types.'
+		),
+		slug: 'blocks',
+	},
+	{
 		title: __( 'Additional' ),
 		description: __( 'Add additional guidelines for your team.' ),
 
@@ -54,7 +62,7 @@ function ContentGuidelinesPage() {
 
 	useEffect( () => {
 		// Populate the store with the content guidelines.
-		fetchContentGuidelines()
+		Promise.all( [ fetchContentGuidelines(), fetchBlockTypes() ] )
 			.then( () => setError( null ) )
 			.catch( ( e: Error ) => setError( e.message ) )
 			.finally( () => setLoading( false ) );
@@ -116,14 +124,18 @@ function ContentGuidelinesPage() {
 												headingId={ headingId }
 												descriptionId={ descriptionId }
 											>
-												<GuidelineAccordionForm
-													slug={ item.slug }
-													contentId={ contentId }
-													headingId={ headingId }
-													descriptionId={
-														descriptionId
-													}
-												/>
+												{ item.slug === 'blocks' ? (
+													<BlockGuidelines />
+												) : (
+													<GuidelineAccordionForm
+														slug={ item.slug }
+														contentId={ contentId }
+														headingId={ headingId }
+														descriptionId={
+															descriptionId
+														}
+													/>
+												) }
 											</GuidelineAccordion>
 										</div>
 									</li>
