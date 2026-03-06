@@ -4,7 +4,11 @@
 import { Page } from '@wordpress/admin-ui';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from '@wordpress/element';
-import { Spinner, Navigator } from '@wordpress/components';
+import {
+	Spinner,
+	Navigator,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { Notice } from '@wordpress/ui';
 
 /**
@@ -96,7 +100,7 @@ function ContentGuidelinesPage() {
 				! error && (
 					<Navigator initialPath="/">
 						<Navigator.Screen path="/">
-							<div className="content-guidelines__content">
+							<VStack className="content-guidelines__content">
 								{ /*
 								 * Disable reason: The `list` ARIA role is redundant but
 								 * Safari+VoiceOver won't announce the list otherwise.
@@ -148,7 +152,7 @@ function ContentGuidelinesPage() {
 								</ul>
 								{ /* eslint-enable jsx-a11y/no-redundant-roles */ }
 								<ActionsSection />
-							</div>
+							</VStack>
 						</Navigator.Screen>
 						<Navigator.Screen path="/manage-access">
 							<ManageAccess />
